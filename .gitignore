@@ -1,0 +1,29 @@
+.idea
+
+/discord-backend/node_modules
+/discord-backend/package-lock.json
+
+/discord-clone/node_modules
+
+/discord-clone/.pnp
+/discord-clone/.pnp.js
+
+# testing
+/discord-clone/coverage
+
+# production
+/discord-clone/build
+
+# misc
+/discord-clone/.DS_Store
+/discord-clone/.env.local
+/discord-clone/.env.development.local
+/discord-clone/.env.test.local
+/discord-clone/.env.production.local
+
+/discord-clone/npm-debug.log*
+/discord-clone/yarn-debug.log*
+/discord-clone/yarn-error.log*
+
+/discord-clone/.idea
+/discord-clone/.firebase
