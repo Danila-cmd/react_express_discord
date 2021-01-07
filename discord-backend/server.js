@@ -60,10 +60,32 @@ app.get('/get/channelList', (req, res) => {
     })
 })
 
-app.post('/new/message', (res, req) => {
+app.get('/get/data', (req,res)=> {
+    mongoData.find((err, data)=> {
+        if(err){
+            res.status(500).send(err)
+        }else{
+            res.status(200).send(data)
+        }
+    })
+})
 
+app.get('/get/conversation', (req,res)=>{
+    const id = req.query.id
+
+    mongoData.find({_id: id}, (err, data) => {
+        if(err) {
+            res.status(500).send(err)
+        }else{
+            res.status(200).send(data)
+        }
+    })
+
+})
+
+app.post('/new/message', (req,res)=>{
     mongoData.update(
-        {_id: req.query.id},
+        { _id: req.query.id },
         {$push: {conversation: req.body}},
         (err, data) => {
             if (err) {

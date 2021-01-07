@@ -9,8 +9,7 @@ import Message from "./Message";
 import {useSelector} from "react-redux";
 import {selectChannelId, selectChannelName} from "./features/appSlice";
 import {selectUser} from "./features/userSlice";
-import db from './firebase'
-import firebase from "firebase";
+import axios from "./axios";
 
 function Chat() {
 
@@ -21,28 +20,27 @@ function Chat() {
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState([])
 
-    useEffect(() => {
+    const getConversation = (channelId) => {
         if (channelId) {
-            db.collection("channels")
-                .doc(channelId)
-                .collection("messages")
-                .orderBy('timestamp', 'desc')
-                .onSnapshot((snapshot) =>
-                    setMessages(snapshot.docs.map((doc) => doc.data()))
-                );
+            axios.get(`/get/conversation?id=${channelId}`).then((res) => {
+                setMessages(res.data[0].conversation)
+            })
         }
+    }
+
+    useEffect(() => {
+        getConversation(channelId)
     }, [channelId]);
 
     const sendMessage = e => {
         e.preventDefault()
-        db.collection("channels")
-            .doc(channelId)
-            .collection("messages")
-            .add({
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                message: input,
-                user: user
-            })
+
+        axios.post(`/new/message?id=${channelId}`, {
+            message: input,
+            timestamp: Date.now(),
+            user: user
+        })
+
         setInput("");
     }
 
