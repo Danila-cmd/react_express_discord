@@ -10,6 +10,12 @@ import {useSelector} from "react-redux";
 import {selectChannelId, selectChannelName} from "./features/appSlice";
 import {selectUser} from "./features/userSlice";
 import axios from "./axios";
+import Pusher from "pusher-js";
+
+const pusher = new Pusher('93e423dc5f0f5f4cc739', {
+    cluster: 'ap2'
+});
+
 
 function Chat() {
 
@@ -30,6 +36,12 @@ function Chat() {
 
     useEffect(() => {
         getConversation(channelId)
+
+        const channel = pusher.subscribe('conversation');
+        channel.bind('newMessage', function(data) {
+            getConversation(channelId)
+        });
+
     }, [channelId]);
 
     const sendMessage = e => {

@@ -12,8 +12,14 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import HeadsetIcon from '@material-ui/icons/Headset';
 import {useSelector} from "react-redux";
 import {selectUser} from "./features/userSlice";
-import db, {auth} from "./firebase"
+import {auth} from "./firebase"
 import axios from "./axios";
+import Pusher from "pusher-js";
+
+const pusher = new Pusher('93e423dc5f0f5f4cc739', {
+    cluster: 'ap2'
+});
+
 
 function Sidebar() {
 
@@ -22,21 +28,27 @@ function Sidebar() {
 
     const getChannels = () => {
         axios.get('/get/channelList')
-            .then((res)=>{
+            .then((res) => {
                 setChannels(res.data)
             })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getChannels()
-    })
+
+        const channel = pusher.subscribe('channels');
+        channel.bind('newChannel', function(data) {
+            getChannels()
+        });
+
+    },[])
 
     const handleAddChannel = () => {
         const channelName = prompt("Enter a new channel name")
 
         if (channelName) {
-            db.collection("channels").add({
-                channelName: channelName,
+            axios.post('/new/channel', {
+                channelName: channelName
             })
         }
     }
@@ -59,7 +71,7 @@ function Sidebar() {
                 </div>
 
                 <div className="sidebar__channelsList">
-                    {channels.map( channel => (
+                    {channels.map(channel => (
                         <SidebarChannel
                             key={channel.id}
                             id={channel.id}
